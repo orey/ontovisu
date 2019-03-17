@@ -1,0 +1,25 @@
+{
+  "name": "ontovisu",
+  "version": "1.0.0",
+  "description": "Visualizer for semantic web data",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://orey@github.com/orey/ontovisu.git"
+  },
+  "keywords": [
+    "ontology",
+    "semantic",
+    "visualizer"
+  ],
+  "author": "O. Rey",
+  "license": "Apache-2.0",
+  "homepage": "https://orey@github.com/orey/ontovisu#readme",
+  "dependencies": {
+    "n3": "^1.0.4",
+    "xmlhttprequest": "^1.8.0"
+  }
+}

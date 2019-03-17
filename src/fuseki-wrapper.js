@@ -15,9 +15,10 @@ class FusekiWrapper {
 	this.hostname = hostname;
 	this.port     = port;
 	// Those members enable to remember the last query
-	this.dataset = ""
-	this.url = ""
-	this.response = ""
+	this.dataset = "";
+	this.url = "";
+	this.response = "";
+	this.result ="";
     }
     query(dataset, query){
 	// Defining the URL to query
@@ -32,26 +33,27 @@ class FusekiWrapper {
 	//	http.open("POST",
 	http.open("GET",
 		  this.url,
-		  true);
+		  false); // third param is async or not
 	// Creating a listener
+	var result;
 	http.onreadystatechange = function() {
 	    if(http.readyState == 4 && http.status == 200) {
 		this.response = http.responseText;
 		console.log(this.response);
 		// Parse the response
 		try {
-		    var result = JSON.parse(this.response);
+		    result = JSON.parse(this.response);
 		}
 		catch(e){
 		    console.log("Error caught during parsing");
 		    console.log(e);
 		}
-		console.log(result);
 	    }
 	}
         http.send(null);
-
+	this.result = result;
     }
+    getResult(){return this.result;}
 }
 
 
