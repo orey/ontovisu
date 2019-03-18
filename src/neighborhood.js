@@ -11,15 +11,18 @@ Interesting pages:
 
 'use strict';
 
-const N3 = require('n3');
+//const N3 = require('n3');
+//const { DataFactory } = N3;
+//const { namedNode, blankNode, literal, defaultGraph, quad} = DataFactory;
 
-const { DataFactory } = N3;
-const { namedNode, blankNode, literal, defaultGraph, quad} = DataFactory;
+const rdfjs = require('./rdfjs');
 
-/*====================================================*/
+/*-----------------------------------------------------
+Global variables
+------------------------------------------------------*/
 
 // Define a list of common prefixes
-let REQ_PREFIXES = {
+const REQ_PREFIXES = {
     rdf   : 'PREFIX rdf:    <http://www.w3.org/1999/02/22-rdf-syntax-ns#>',
     rdfs  : 'PREFIX rdfs:   <http://www.w3.org/2000/01/rdf-schema#>',
     dc    : 'PREFIX dc:     <http://purl.org/dc/elements/1.1/>',
@@ -36,91 +39,9 @@ function define_prefix(key, value) {
     PREFIXES[key] = value;
 }
 
-/*====================================================*/
-
-class Term {
-    constructor(termType, value) {
-	if (! (TermType instanceof String))
-	    throw new TypeError("termType should be a String. Provided type: " +
-				termType.constructor.name);
-	this.termType = termType;
-	if (! (value instanceof String))
-	    throw new TypeError("value should be a String. Provided type: " +
-				value.constructor.name);
-	this.value = value;
-    }
-    equals(t){
-	if ((t.termType == this.termType) && (t.value == this.value))
-	    return true;
-	else
-	    return false;
-    }
-}
-
-class NamedNode(Term){}
-
-class BlankNode(Term){}
-
-class Literal(Term){
-    constructor(termType, value, language, datatype){
-	super(termType, value);
-	if (! (language instanceof String))
-	    throw new TypeError("language should be a String. Provided type: " +
-				language.constructor.name);
-	this.language = language;
-	if (! (datatype instanceof NamedNode))
-	    throw new TypeError("datatype should be a NamedNode. Provided type: " +
-				datatype.constructor.name);
-	this.datatype = datatype;
-    }
-    equals(t){
-	if ((t.termType == this.termType) && (t.value == this.value) &&
-	    (t.language == this.language) && this.datatype.equals(t.datatype))
-	    return true;
-	else
-	    return false;
-    }
-}
-
-class DefaultGraph(Term){}
-
-class Quad{
-    constructor(subject, predicate, object, graph){
-	if (!(subject instanceof Term) || !(predicate instanceof Term) ||
-	    !(object instanceof Term) || !(graph instanceof Term))
-	    throw new TypeError("Arguments of Quad constructor must all be of type Term");
-	this.subject = subject;
-	this.predicate = predicate;
-	this.object = object;
-	this.graph = graph;
-    }
-    equals(q){
-	if (this.subject.equals(q.subject) && this.predicate.equals(q.predicate) &&
-	    this.object.equals(q.object) && this.graph.equals(q.graph))
-	    return true;
-	else
-	    return false;
-    }
-}
-
-class DataFactory{
-    namedNode(value){return new NamedNode("NamedNode",value);}
-    blankNode(value=""){return new BlankNode("BlankNode", value):}
-    literal(
-	// reprendre ici
-
-}
-
-
-/*====================================================*/
-
-
-function printQuad(q){
-    console.log("Graph: "+ q.graph.value + " | " +
-		q.subject.value + " " + q.predicate + " " +
-		q.object.value);
-}
-
+/*-----------------------------------------------------
+Class Neighborhodd
+------------------------------------------------------*/
 
 
 /*
@@ -135,7 +56,7 @@ This class supports the following types for the root node:
 * BlankNode
 * Members: node, graph, both
 */
-class neighborhood {
+class Neighborhood {
     constructor(graph, node, verbose=false) {	
 	this.verbose = verbose;
 	this.graph = graph;
