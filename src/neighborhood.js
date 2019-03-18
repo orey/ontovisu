@@ -54,95 +54,94 @@ This class supports the following types for the root node:
 * Literal
 * NamedNode
 * BlankNode
-* Members: node, graph, both
+* Members: node, graph, both, neighbors
 */
 class Neighborhood {
-    constructor(graph, node, verbose=false) {	
-	this.verbose = verbose;
+    constructor(graph, node) {	
 	this.graph = graph;
 	this.node = node;
 	this.neighbors = []; // List of quads
-	if (this.verbose) {
-	    console.log("Graph = " + graph);
-	    console.log("Node =" + node);
-	}
-	if (node instanceof literal) {
-	    if (this.verbose) console.log("Found literal");
+	if (node.constructor.name == "Literal") {
 	    this.both = false;
 	    return;
 	}
-	if (!(node instanceof namedNode) && !(node instanceof blankNode))
+	// This test is to be forced to manage progessively the variety of types
+	if ((node.constructor.name != "NamedNode") &&
+	    (node.constructor.name != "BlankNode"))
 	    throw new Error("Unknown type of node: " + node.constructor.name)
 	this.both = true;
     }
 
     queryTo() {
-	return "SELECT ?s ?p  WHERE { ?s ?p " + this.getNodeString() + " .}";
+	return "SELECT ?s ?p  WHERE { ?s ?p " + this.node.to_str() + " .}";
     }
 
     /*{ head: { vars: [ 'a', 'b' ] },
       results: { bindings: [ [Object], [Object], [Object], [Object] ] } }*/
     parseQueryTo(result){
 	//get the array of results
-	arr = result.results.bindings;
+	if (result == null) return;
+	var arr = result.results.bindings;
 	for (var e of arr) {
 	    // Build a quad from results
 	    /*{ s: { type: 'uri', value: 'http://example.org/book/book7' },
 	      p: { type: 'literal',  value: 'Harry' } }*/
 	    var subject, predicate;
 	    if (e.s.type == 'uri')
-		subject = namedNode(e.s.value);
+		subject = new rdfjs.NamedNode(e.s.value);
+	    else if (e.s.type == 'bnode')
+		subject = new rdfjs.BlankNode(e.s.value);
 	    else
 		throw new Error("Unknown type of subject: " + e.s.type);
 	    if (e.p.type == 'uri')
-		predicate  = namedNode(e.p.value);
+		predicate  = new rdfjs.NamedNode(e.p.value);
 	    else
 		throw new Error("Unknown type of predicate: " + e.p.type);
-	    this.neighbors.push(quad(subject,
+	    this.neighbors.push(new rdfjs.Quad(subject,
 				     predicate,
 				     this.node,
-				     defaultGraph(this.graph)));
+				     new rdfjs.DefaultGraph(this.graph)));
 	}
     }
 
     queryFrom(){
-	return "SELECT ?p ?o  WHERE { " + this.getNodeString() + " ?p ?o .}";
+	return "SELECT ?p ?o  WHERE { " + this.node.to_str() + " ?p ?o .}";
     }
 
     parseQueryFrom(result) {
-	arr = result.results.bindings;
+	if (result == null) return;
+	var arr = result.results.bindings;
 	for (var e of arr) {
 	    var predicate, object;
 	    if (e.p.type == 'uri')
-		predicate  = namedNode(e.p.value);
+		predicate = new rdfjs.NamedNode(e.p.value);
 	    else
 		throw new Error("Unknown type of predicate: " + e.p.type);
 	    if (e.o.type == 'uri')
-		object = namedNode(e.o.value);
+		object = new rdfjs.NamedNode(e.o.value);
 	    else if (e.o.type == "literal")
-		object = Literal(e.o.value);
+		object = new rdfjs.Literal(e.o.value);
+	    else if (e.o.type == 'bnode')
+		object = new rdfjs.BlankNode(e.o.value);
 	    else
 		throw new Error("Unknown type of object: " + e.o.type);
-	    this.neighbors.push(quad(this.node,
+	    this.neighbors.push(new rdfjs.Quad(this.node,
 				     predicate,
 				     object,
-				     defaultGraph(this.graph)));
+				     new rdfjs.DefaultGraph(this.graph)));
 	}
     }
 	
-    getNodeString(rough=false){
-	if (rough) return this.node.value;
-	else return "<" + this.node.value + ">";
-    }
-
-    // server is supposed to be a SPARQL endpoint
+    // server is supposed to be a SPARQL endpoint implementing the "query" interface
     getNeighborhood(server) {
 	// Run the queryTo
-	var result_to = server.query(this.graph, this.queryTo());
+	server.query(this.graph, this.queryTo());
+	var result_to = server.getResult();
 	this.parseQueryTo(result_to);
 	if (this.both == true) {
 	    // Run the queryFrom
-	    var result_from = server.query(this.graph, this.queryFrom());
+	    server.query(this.graph, this.queryFrom());
+	    var result_from = server.getResult();
 	    this.parseQueryFrom(result_from);
 	}
     }
@@ -151,8 +150,10 @@ class Neighborhood {
 	return this.neighbors;
     }
 
-    printNeighbors() {
-	for (q of this.neighbors) printQuad(q);
+    to_str() {
+	var output = ""
+	for (q of this.neighbors) output += q.to_str() + "\n";
+	return output;
     }
 }
 
@@ -166,24 +167,14 @@ function test1(){
     define_prefix('toto', 'tutu')
     console.log(PREFIXES);
 
-    const myQuad = quad(
-	namedNode('https://ruben.verborgh.org/profile/#me'),
-	namedNode('http://xmlns.com/foaf/0.1/givenName'),
-	literal('Ruben', 'en'),
-	defaultGraph(),
+    const myQuad = new rdfjs.Quad(
+	new rdfjs.NamedNode('https://ruben.verborgh.org/profile/#me'),
+	new rdfjs.NamedNode('http://xmlns.com/foaf/0.1/givenName'),
+	new rdfjs.Literal('Ruben', 'en'),
+	new rdfjs.DefaultGraph(),
     );
-    console.log(myQuad.subject.value);         // https://ruben.verborgh.org/profile/#me
-    console.log("Type of subject: " + myQuad.subject.constructor.name);
-    console.log(myQuad.predicate.value);
-    console.log("Type of predicate: " + myQuad.predicate.constructor.name);
-    console.log(myQuad.object.value);          // Ruben
-    console.log(myQuad.object.datatype.value); // http://www.w3.org/1999/02/22-rdf-syntax-ns#langString
-    console.log("Type of object: " + myQuad.object.constructor.name);
-    console.log(myQuad.object.language);       // en
+    console.log(myQuad.to_str());
 }
-
-
-
 
 test1();
 
@@ -193,7 +184,7 @@ test1();
  *=======================================*/
 module.exports = {
     define_prefix : define_prefix,
-    neighborhood : neighborhood
+    Neighborhood : Neighborhood
 }
 
 

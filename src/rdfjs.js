@@ -18,7 +18,7 @@ In order to represent them, we have also the obligation of
 making them unique, which implies a subclassing.
 ------------------------------------------------------*/
 
-const DEFAULT_GRAPH = "ds";
+const DEFAULT_GRAPH = "DEFAULT";
 
 class Term {
     constructor(termType, value) {
@@ -39,6 +39,9 @@ class Term {
 	else
 	    return false;
     }
+    to_str(){
+	return "== Term == Termtype: " + this.termType + " | Value: " + this.value;
+    }
 }
 
 // Liberty with the standard, the object is directly buildable
@@ -46,6 +49,9 @@ class Term {
 class NamedNode extends Term{
     constructor(value){
 	super("NamedNode", value);
+    }
+    to_str(){
+	return "<" + this.value + ">";
     }
 }
 
@@ -55,11 +61,14 @@ class BlankNode extends Term{
     constructor(value){
 	super("BlankNode", value);
     }
+    to_str(){
+	return "<" + this.value + ">";
+    }
 }
 
 // Interpretation of the standard
 class Literal extends Term{
-    constructor(value, languageOrDatatype){
+    constructor(value, languageOrDatatype = "en"){
 	super("Literal", value);
 	let ltype = languageOrDatatype.constructor.name;
 	if (ltype == "String") {
@@ -84,30 +93,35 @@ class Literal extends Term{
 	else
 	    return false;
     }
+    to_str(){
+	return '"' + this.value + '"';
+    }
 }
 
 class Variable extends Term{
     constructor(value){
 	super("Variable", value);
     }
+    to_str(){
+	return "[" + this.value + "]";
+    }
 }
 
 class DefaultGraph extends Term{
-    constructor(value){
+    constructor(value = "DEFAULT_GRAPH"){
 	super("DefaultGraph", value);
     }
+    to_str(){
+	return "(" + this.value + ")";
+    }    
 }
 
 class Quad{
     constructor(subject, predicate, object, graph){
-	if ((!subject typeof "Term") ||
-
-//reprendre ici
-
-	    
-	    (predicate.constructor.name != "Term") ||
-	    (object.constructor.name != "Term") ||
-	    (graph.constructor.name != "Term"))
+	if ((!subject instanceof Term) ||
+	    (!predicate instanceof Term) ||
+	    (!object instanceof Term) ||
+	    (!graph  instanceof Term))
 	    throw new TypeError("Arguments of Quad constructor must all be of type Term");
 	this.subject = subject;
 	this.predicate = predicate;
@@ -120,6 +134,12 @@ class Quad{
 	    return true;
 	else
 	    return false;
+    }
+    to_str(){
+	return this.graph.to_str() + " | " +
+	    this.subject.to_str() + " " +
+	    this.predicate.to_str() + " " +
+	    this.object.to_str() + " .";
     }
 }
 
@@ -152,23 +172,13 @@ class DataFactory{
 }
 
 
-/*----------------------------------------------------------
-Utilities
-----------------------------------------------------------*/
-function printQuad(q){
-    console.log("Graph: "+ q.graph.value + " | Triple: " +
-		q.subject.value + " " + q.predicate + " " +
-		q.object.value);
-}
-
-
 /*-----------------------------------------------------
 Tests
 ------------------------------------------------------*/
 function test1(){
     q = new Quad(new NamedNode("dc:toto"), new NamedNode("a"),
-	     new Literal("a", "en"), new DefaultGraph("books"));
-    printQuad(q);
+	     new Literal("Rouboudou", "en"), new DefaultGraph("books"));
+    console.log(q.to_str());
 }
 
 test1();
@@ -184,8 +194,7 @@ module.exports = {
     Variable : Variable,
     DefaultGraph : DefaultGraph,
     Quad : Quad,
-    DataFactory : DataFactory,
-    printQuad : printQuad
+    DataFactory : DataFactory
 }
 
 

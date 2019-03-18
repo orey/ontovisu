@@ -9,12 +9,16 @@
 
 const http = require('http');
 const XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
-const N3 = require('n3');
-const { DataFactory } = N3;
-const { namedNode, blankNode, literal, defaultGraph, quad } = DataFactory;
+
+//const N3 = require('n3');
+//const { DataFactory } = N3;
+//const { namedNode, blankNode, literal, defaultGraph, quad } = DataFactory;
+
 
 var fuzeki = require('./fuseki-wrapper');
+var rdfjs = require('./rdfjs.js');
 var nb = require('./neighborhood.js');
+
 
 // Defining server parameters
 const hostname = '127.0.0.1';
@@ -31,20 +35,24 @@ const server = http.createServer((req, res) => {
     var arr = result.results.bindings;
     for (var e of arr) console.log(e);
 
-    var t1 = new nb.neighborhood("books", literal("J.K. Rowling"), true);
+    var t1 = new nb.Neighborhood("books",
+				 new rdfjs.Literal("J.K. Rowling",
+						   new rdfjs.NamedNode("http://www.w3.org/1999/02/22-rdf-syntax-ns#langString")));
     t1.getNeighborhood(fuz);
-    t1.printNeighbors();
 
-
+    var t2 = new nb.Neighborhood("books", new rdfjs.NamedNode("http://example.org/book/book2"));
+    t2.getNeighborhood(fuz);
     
     res.statusCode = 200;
     res.setHeader('Content-Type', 'text/plain');
-    res.end('Look at the logs\n');
-
-    
-
-
-
+    //res.end
+    res.write("======\nTest 1\n======\n" +
+	      t1.to_str() +
+	      "======\nTest 2\n======\n" +
+	      t2.to_str() +
+	      "======================");
+	      
+    res.end("End");
     
 });
 
