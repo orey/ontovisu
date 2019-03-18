@@ -152,7 +152,7 @@ class Neighborhood {
 
     to_str() {
 	var output = ""
-	for (q of this.neighbors) output += q.to_str() + "\n";
+	for (var q of this.neighbors) output += q.to_str() + "\n";
 	return output;
     }
 }
