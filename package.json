@@ -19,7 +19,6 @@
   "license": "Apache-2.0",
   "homepage": "https://orey@github.com/orey/ontovisu#readme",
   "dependencies": {
-    "n3": "^1.0.4",
     "xmlhttprequest": "^1.8.0"
   }
 }

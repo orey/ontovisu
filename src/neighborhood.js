@@ -157,11 +157,10 @@ class Neighborhood {
     }
 }
 
-
-
-
 /*=======================================
  * Tests
+ * To run on the console:
+ * $ node -e "var a = require('./neighborhood.js'); a.test1()"
  *=======================================*/
 function test1(){
     define_prefix('toto', 'tutu')
@@ -170,21 +169,20 @@ function test1(){
     const myQuad = new rdfjs.Quad(
 	new rdfjs.NamedNode('https://ruben.verborgh.org/profile/#me'),
 	new rdfjs.NamedNode('http://xmlns.com/foaf/0.1/givenName'),
-	new rdfjs.Literal('Ruben', 'en'),
+	new rdfjs.Literal('Johnny Go', 'en'),
 	new rdfjs.DefaultGraph(),
     );
     console.log(myQuad.to_str());
 }
-
-test1();
-
 
 /*=======================================
  * Exports
  *=======================================*/
 module.exports = {
     define_prefix : define_prefix,
-    Neighborhood : Neighborhood
+    Neighborhood : Neighborhood,
+    test1 : test1
 }
+
 
 

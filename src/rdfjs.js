@@ -174,14 +174,14 @@ class DataFactory{
 
 /*-----------------------------------------------------
 Tests
+To run on the console:
+$ node -e "var a = require('./rdfjs.js');a.test1()"
 ------------------------------------------------------*/
 function test1(){
     q = new Quad(new NamedNode("dc:toto"), new NamedNode("a"),
 	     new Literal("Rouboudou", "en"), new DefaultGraph("books"));
     console.log(q.to_str());
 }
-
-test1();
 
 /*----------------------------------------------------------
 Exports
@@ -194,7 +194,8 @@ module.exports = {
     Variable : Variable,
     DefaultGraph : DefaultGraph,
     Quad : Quad,
-    DataFactory : DataFactory
+    DataFactory : DataFactory,
+    test1 : test1
 }
 
 

@@ -8,17 +8,17 @@
 'use strict';
 
 const http = require('http');
-const XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
-
-//const N3 = require('n3');
-//const { DataFactory } = N3;
-//const { namedNode, blankNode, literal, defaultGraph, quad } = DataFactory;
-
+//const XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
 
 var fuzeki = require('./fuseki-wrapper');
 var rdfjs = require('./rdfjs.js');
 var nb = require('./neighborhood.js');
 
+function htmlEscape(str) {
+    return String(str)
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;');
+}
 
 // Defining server parameters
 const hostname = '127.0.0.1';
@@ -44,15 +44,14 @@ const server = http.createServer((req, res) => {
     t2.getNeighborhood(fuz);
     
     res.statusCode = 200;
-    res.setHeader('Content-Type', 'text/plain');
+    res.setHeader('Content-Type', 'text/html');
     //res.end
-    res.write("======\nTest 1\n======\n" +
-	      t1.to_str() +
-	      "======\nTest 2\n======\n" +
-	      t2.to_str() +
-	      "======================");
-	      
-    res.end("End");
+    res.write("<html><title>Tests Ontovisu</title><body>" +
+	      "<h1>Test 1</h1><pre>" +
+	      htmlEscape(t1.to_str()) + "</pre>" +
+	      "<h1>Test 2</h1><pre>" +
+	      htmlEscape(t2.to_str()) + "</pre>");
+    res.end("<p>End</p></body></html>");
     
 });
 
