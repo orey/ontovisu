@@ -1,7 +1,7 @@
 /******************************************************
  * Author: O. Rey
  * email: rey.olivier@gmail.com
- * Date: March 15 2019
+ * Date: March 19 2019
  * Sparql server interface
  * License: Apache 2
  ******************************************************/
@@ -10,7 +10,7 @@
 
 class NotImplemented extends Error {
     constructor(msg="") {
-        super("Not implemented. ")
+        super("Not implemented. " + msg)
     }
 }
 

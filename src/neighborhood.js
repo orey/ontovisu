@@ -15,6 +15,15 @@ Instead a customized version of the standard was used.
 // Customized version of http://rdf.js.org/
 const rdfjs = require('./rdfjs');
 
+const crypto = require('crypto');
+
+function generateId() {
+    crypto.randomBytes(256, (err, buf) => {
+        if (err) throw err;
+        console.log(`${buf.length} bytes of random data: ${buf.toString('hex')}`);
+      });      
+}
+
 /*-----------------------------------------------------
 Global variables
 ------------------------------------------------------*/
@@ -210,7 +219,8 @@ function test1(){
 module.exports = {
     define_prefix : define_prefix,
     Neighborhood : Neighborhood,
-    test1 : test1
+    test1 : test1,
+    generateId : generateId
 }
 
 
