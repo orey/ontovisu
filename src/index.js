@@ -8,38 +8,60 @@
 'use strict';
 
 const http = require('http');
-//const XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
 
-var fuzeki = require('./fuseki-wrapper');
 var rdfjs = require('./rdfjs.js');
+var fuzeki = require('./fuseki-wrapper');
 var nb = require('./neighborhood.js');
 
+/*--------------------------------------------------- 
+ * Defining Fuseki server parameters
+ --------------------------------------------------- */
+const hostname = '127.0.0.1';
+const port = 3000;
+
+/*--------------------------------------------------- 
+ * Utilities
+ --------------------------------------------------- */
+ /**
+ * This functions turns URI into HTML URI
+ * @param {*} str: the string to treat
+ */
 function htmlEscape(str) {
     return String(str)
             .replace(/</g, '&lt;')
             .replace(/>/g, '&gt;');
 }
 
-// Defining server parameters
-const hostname = '127.0.0.1';
-const port = 3000;
+/*--------------------------------------------------- 
+ * HTTP server
+ --------------------------------------------------- */
+const test_query1 = 'PREFIX dc: <http://purl.org/dc/elements/1.1/>\nSELECT ?a ?b \n' +
+              'WHERE { ?a dc:creator "J.K. Rowling" .\n?a dc:title ?b\n}'
 
-
-const server = http.createServer((req, res) => {
-    var query = 'PREFIX dc: <http://purl.org/dc/elements/1.1/>\nSELECT ?a ?b \nWHERE { ?a dc:creator "J.K. Rowling" .\n?a dc:title ?b\n}'
-
+ const server = http.createServer((req, res) => {
+    // Init the server
     let fuz = new fuzeki.FusekiWrapper("http://localhost", 3030);
-    fuz.query("books", query);
-    var result = fuz.getResult();
-    console.log(result);
-    var arr = result.results.bindings;
-    for (var e of arr) console.log(e);
 
+    // Test 1: console test
+    // running the query
+    var resp = fuz.query("books", test_query1);
+    
+    // getting the result
+    console.log(resp);
+    
+    var arr = resp.results.bindings;
+    var st = "";
+    for (var e of arr)
+        st += e;
+    console.log(st);
+
+    // Test 2
     var t1 = new nb.Neighborhood("books",
 				 new rdfjs.Literal("J.K. Rowling",
 						   new rdfjs.NamedNode("http://www.w3.org/1999/02/22-rdf-syntax-ns#langString")));
     t1.getNeighborhood(fuz);
 
+    // Test 3
     var t2 = new nb.Neighborhood("books", new rdfjs.NamedNode("http://example.org/book/book2"));
     t2.getNeighborhood(fuz);
     
@@ -47,15 +69,16 @@ const server = http.createServer((req, res) => {
     res.setHeader('Content-Type', 'text/html');
     //res.end
     res.write("<html><title>Tests Ontovisu</title><body>" +
-	      "<h1>Test 1</h1><pre>" +
-	      htmlEscape(t1.to_str()) + "</pre>" +
-	      "<h1>Test 2</h1><pre>" +
-	      htmlEscape(t2.to_str()) + "</pre>");
-    res.end("<p>End</p></body></html>");
-    
-});
+              "<h1>Test 1</h1><pre>" + st + "</pre>" +
+              "<h1>Test 2</h1><pre>" +
+	          htmlEscape(t1.to_str()) + "</pre>" +
+	          "<h1>Test 3</h1><pre>" +
+              htmlEscape(t2.to_str()) + "</pre>");
 
-server.listen(port, hostname, () => {
-    console.log(`Server running at http://${hostname}:${port}/`);
+    res.end("<p>End</p></body></html>");
+    });
+
+    server.listen(port, hostname, () => {
+        console.log(`Server running at http://${hostname}:${port}/`);
 });
 
