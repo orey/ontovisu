@@ -10,7 +10,7 @@
 const http = require('http');
 
 var rdfjs = require('./rdfjs.js');
-var fuzeki = require('./fuseki-wrapper');
+var fuzeki = require('./database/fuseki-wrapper');
 var nb = require('./neighborhood.js');
 
 /*--------------------------------------------------- 
