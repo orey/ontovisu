@@ -1,0 +1,4 @@
+PATH=/home/olivier/Software/node/bin/:$PATH
+echo $PATH
+
+

@@ -1,0 +1,8 @@
+#!/bin/bash
+echo "Usage: 'source fuseki-start.sh'"
+echo "Fuseki1-3.8.0"
+FUSEKIPATH=/home/olivier/Software/jena-fuseki
+cd $FUSEKIPATH
+./fuseki-server --config=config.ttl
+
+
