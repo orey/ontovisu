@@ -9,8 +9,9 @@ The 'N3' js library was removed as a dependency because
 it did not allow accesses to the internal classes.
 Instead a customized version of the standard was used.
 ------------------------------------------------------*/
-
 'use strict';
+
+const uuidv4 = require('uuid/v4');
 
 // Customized version of http://rdf.js.org/
 const rdfjs = require('./rdfjs');
@@ -109,18 +110,18 @@ class Neighborhood {
             p: { type: 'literal',  value: 'Harry' } }*/
             var subject, predicate;
             if (e.s.type == 'uri')
-            subject = new rdfjs.NamedNode(e.s.value);
+		subject = new rdfjs.NamedNode(e.s.value);
             else if (e.s.type == 'bnode')
-            subject = new rdfjs.BlankNode(e.s.value);
+		subject = new rdfjs.BlankNode(e.s.value);
             else
-            throw new Error("Unknown type of subject: " + e.s.type);
+		throw new Error("Unknown type of subject: " + e.s.type);
             if (e.p.type == 'uri')
-            predicate  = new rdfjs.NamedNode(e.p.value);
+		predicate  = new rdfjs.NamedNode(e.p.value);
             else
-            throw new Error("Unknown type of predicate: " + e.p.type);
+		throw new Error("Unknown type of predicate: " + e.p.type);
             this.neighbors.push(new rdfjs.Quad(subject,
-                        predicate,
-                        this.node,
+					       predicate,
+					       this.node,
                         new rdfjs.DefaultGraph(this.graph)));
         }
     }
@@ -191,7 +192,8 @@ class Neighborhood {
      */
     to_str() {
         var output = "";
-        for (var q of this.neighbors) output += q.to_str() + "\n";
+        for (var q of this.neighbors)
+	    output += q.to_str() + "\n";
         return output;
         }
 }

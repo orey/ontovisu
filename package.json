@@ -20,6 +20,7 @@
   "homepage": "https://orey@github.com/orey/ontovisu#readme",
   "dependencies": {
     "express": "^4.16.4",
+    "uuid": "^3.3.2",
     "xmlhttprequest": "^1.8.0"
   }
 }
