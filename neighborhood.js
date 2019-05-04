@@ -11,19 +11,25 @@ Instead a customized version of the standard was used.
 ------------------------------------------------------*/
 'use strict';
 
+//TODO: maybe not useful
 const uuidv4 = require('uuid/v4');
 
 // Customized version of http://rdf.js.org/
 const rdfjs = require('./rdfjs');
 
+//TODO: maybe not useful
 const crypto = require('crypto');
 
 function generateId() {
     crypto.randomBytes(256, (err, buf) => {
-        if (err) throw err;
-        console.log(`${buf.length} bytes of random data: ${buf.toString('hex')}`);
-      });      
+        if (err)
+            throw err;
+        console.log(
+            `${buf.length} bytes of random data: ${buf.toString('hex')}`
+        );
+    });
 }
+
 
 /*-----------------------------------------------------
 Global variables
@@ -71,7 +77,8 @@ class Neighborhood {
      * node is the rootnode and graph its attachment graph.
      * @param {*} graph: DefaultGraph
      * @param {*} node: Literal, NamedNode, BlankNode
-     */constructor(graph, node) {	
+     */
+    constructor(graph, node) {
         this.graph = graph;
         this.node = node;
         this.neighbors = []; // List of quads
@@ -90,7 +97,7 @@ class Neighborhood {
      * Builds the query that matches the root node as an object
      *  */
     queryTo() {
-    	return "SELECT ?s ?p  WHERE { ?s ?p " + this.node.to_str() + " .}";
+        return "SELECT ?s ?p  WHERE { ?s ?p " + this.node.to_str() + " .}";
     }
 
     /**
@@ -110,18 +117,18 @@ class Neighborhood {
             p: { type: 'literal',  value: 'Harry' } }*/
             var subject, predicate;
             if (e.s.type == 'uri')
-		subject = new rdfjs.NamedNode(e.s.value);
+                subject = new rdfjs.NamedNode(e.s.value);
             else if (e.s.type == 'bnode')
-		subject = new rdfjs.BlankNode(e.s.value);
+                subject = new rdfjs.BlankNode(e.s.value);
             else
-		throw new Error("Unknown type of subject: " + e.s.type);
+                throw new Error("Unknown type of subject: " + e.s.type);
             if (e.p.type == 'uri')
-		predicate  = new rdfjs.NamedNode(e.p.value);
+                predicate  = new rdfjs.NamedNode(e.p.value);
             else
-		throw new Error("Unknown type of predicate: " + e.p.type);
+                throw new Error("Unknown type of predicate: " + e.p.type);
             this.neighbors.push(new rdfjs.Quad(subject,
-					       predicate,
-					       this.node,
+                                               predicate,
+                                               this.node,
                         new rdfjs.DefaultGraph(this.graph)));
         }
     }
@@ -130,7 +137,7 @@ class Neighborhood {
      * Builds the query where the root node is a subject
      */
     queryFrom(){
-	    return "SELECT ?p ?o  WHERE { " + this.node.to_str() + " ?p ?o .}";
+        return "SELECT ?p ?o  WHERE { " + this.node.to_str() + " ?p ?o .}";
     }
 
     /**
@@ -163,11 +170,11 @@ class Neighborhood {
                                 new rdfjs.DefaultGraph(this.graph)));
         }
     }
-	
+
     /**
      * Once the object is created, this method is supposed to build the
      * neighborhood while querying the Sparql endpoint
-     * @param {*} server: supposed to be a SPARQL server 
+     * @param {*} server: supposed to be a SPARQL server
      */
     getNeighborhood(server) {
         // Run the queryTo
@@ -179,12 +186,12 @@ class Neighborhood {
             this.parseQueryFrom(result_from);
         }
     }
-    
+
     /**
      * Simple get method
      */
     getNeighbors() {
-    	return this.neighbors;
+        return this.neighbors;
     }
 
     /**
@@ -193,7 +200,7 @@ class Neighborhood {
     to_str() {
         var output = "";
         for (var q of this.neighbors)
-	    output += q.to_str() + "\n";
+            output += q.to_str() + "\n";
         return output;
         }
 }
@@ -208,10 +215,10 @@ function test1(){
     console.log(PREFIXES);
 
     const myQuad = new rdfjs.Quad(
-	                        new rdfjs.NamedNode('https://ruben.verborgh.org/profile/#me'),
-	                        new rdfjs.NamedNode('http://xmlns.com/foaf/0.1/givenName'),
-	                        new rdfjs.Literal('Johnny Go', 'en'),
-	                        new rdfjs.DefaultGraph());
+        new rdfjs.NamedNode('https://ruben.verborgh.org/profile/#me'),
+        new rdfjs.NamedNode('http://xmlns.com/foaf/0.1/givenName'),
+        new rdfjs.Literal('Johnny Go', 'en'),
+        new rdfjs.DefaultGraph());
     console.log(myQuad.to_str());
 }
 
@@ -224,6 +231,3 @@ module.exports = {
     test1 : test1,
     generateId : generateId
 }
-
-
-

@@ -15,10 +15,15 @@ Our interpretation of the standard makes it possible to
 use the classes inside the standard, not only through
 the factory, and so to have libraries, manipulating those
 objects.
+This requirement is mandatory if we consider that each
+single object, in order to be displayed as a graph,
+will need to have an ID.
 In order to represent them, we have also the obligation of
 making them unique, which implies class customization 
 or subclassing.
 ------------------------------------------------------*/
+
+var uuidv4 = require('uuid/v4');
 
 const DEFAULT_GRAPH = "DEFAULT";
 
@@ -27,25 +32,26 @@ const DEFAULT_GRAPH = "DEFAULT";
  */
 class Term {
     constructor(termType, value) {
-	    if (termType.constructor.name != "String")
-	        throw new TypeError("termType should be a String. Provided type: " +
+	if (termType.constructor.name != "String")
+	    throw new TypeError("termType should be a String. Provided type: " +
 				termType.constructor.name);
-	    this.termType = termType;
-	    console.log(value);
-	    console.log(value.constructor.name);
-	    if (value.constructor.name != "String")
-	        throw new TypeError("value should be a String. Provided type: " +
+	this.termType = termType;
+	console.log(value);
+	console.log(value.constructor.name);
+	if (value.constructor.name != "String")
+	    throw new TypeError("value should be a String. Provided type: " +
 				value.constructor.name);
-	    this.value = value;
+	this.value = value;
+	this.id = uuidv4(); 
     }
     equals(t){
-	    if ((t.termType == this.termType) && (t.value == this.value))
-	        return true;
-	    else
-	        return false;
+	if ((t.termType == this.termType) && (t.value == this.value))
+	    return true;
+	else
+	    return false;
     }
     to_str(){
-	    return "== Term == Termtype: " + this.termType + " | Value: " + this.value;
+	return "== Term == Termtype: " + this.termType + " | Value: " + this.value;
     }
 }
 
