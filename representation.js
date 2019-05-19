@@ -54,7 +54,7 @@ function test(){
 
 
 function get_neighbours(node){
-    var query = `SELECT ?n\n WHERE {\n ?n rdf:value ${node.to_str()} ;\n rdf:type ga:Node .\n }`;
+    var query = `SELECT ?n WHERE { ?n rdf:value ${node.to_str()} ; rdf:type ga:Node . }`;
     
     return query;
 

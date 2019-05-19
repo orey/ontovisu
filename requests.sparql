@@ -13,3 +13,25 @@ WHERE {
   ?n rdf:value :book2 ;
      rdf:type ns1:Node .
 }
+
+----
+PREFIX : <http://example.org/book/>
+PREFIX dc: <http://purl.org/dc/elements/1.1/>
+PREFIX ns: <http://example.org/ns#>
+PREFIX ga: <https://orey.github.io/graphapps-V1#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX vcard: <http://www.w3.org/2001/vcard-rdf/3.0#>
+PREFIX xml: <http://www.w3.org/XML/1998/namespace>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+
+SELECT ?a ?b ?c
+WHERE {
+  ?a rdf:type ga:Node ;
+     rdf:value :book1 .
+  ?b ga:source ?a ;
+     ga:target ?c ;
+     rdf:type ga:Edge .
+  ?c rdf:type ga:Node ;
+     rdf:value "J.K. Rowling" .
+}
