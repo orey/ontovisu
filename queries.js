@@ -15,6 +15,29 @@ const HarryPotter01 = {
                }`
 };
 
+const HarryNodes = {
+    dataset : 'books',
+    query :
+    `PREFIX dc: <http://purl.org/dc/elements/1.1/>
+PREFIX ns: <http://example.org/ns#>
+PREFIX ns1: <https://orey.github.io/graphapps-V1#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX vcard: <http://www.w3.org/2001/vcard-rdf/3.0#>
+PREFIX xml: <http://www.w3.org/XML/1998/namespace>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+
+SELECT ?s
+WHERE {
+  ?s rdf:type ns1:Node
+}
+`};
+
+
+
+
+
+
 const airbus01 = Object.create(HarryPotter01);
 
 airbus01.dataset = 'CI_CATALOG';

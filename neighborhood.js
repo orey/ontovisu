@@ -11,25 +11,8 @@ Instead a customized version of the standard was used.
 ------------------------------------------------------*/
 'use strict';
 
-//TODO: maybe not useful
-const uuidv4 = require('uuid/v4');
-
 // Customized version of http://rdf.js.org/
 const rdfjs = require('./rdfjs');
-
-//TODO: maybe not useful
-const crypto = require('crypto');
-
-function generateId() {
-    crypto.randomBytes(256, (err, buf) => {
-        if (err)
-            throw err;
-        console.log(
-            `${buf.length} bytes of random data: ${buf.toString('hex')}`
-        );
-    });
-}
-
 
 /*-----------------------------------------------------
 Global variables

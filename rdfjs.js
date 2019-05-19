@@ -17,13 +17,13 @@ the factory, and so to have libraries, manipulating those
 objects.
 This requirement is mandatory if we consider that each
 single object, in order to be displayed as a graph,
-will need to have an ID.
+will need to have an ID => false.
 In order to represent them, we have also the obligation of
 making them unique, which implies class customization 
 or subclassing.
 ------------------------------------------------------*/
 
-var uuidv4 = require('uuid/v4');
+//var uuidv4 = require('uuid/v4');
 
 const DEFAULT_GRAPH = "DEFAULT";
 
@@ -42,7 +42,7 @@ class Term {
 	    throw new TypeError("value should be a String. Provided type: " +
 				value.constructor.name);
 	this.value = value;
-	this.id = uuidv4(); 
+//	this.id = uuidv4(); 
     }
     equals(t){
 	if ((t.termType == this.termType) && (t.value == this.value))
