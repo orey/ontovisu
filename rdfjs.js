@@ -151,7 +151,19 @@ class Quad {
             this.subject.to_str() + " " +
             this.predicate.to_str() + " " +
             this.object.to_str() + " .";
-        }
+    }
+    get_graph(){
+        return this.graph;
+    }
+    get_subject(){
+        return this.subject;
+    }
+    get_predicate(){
+        return this.predicate;
+    }
+    get_object(){
+        return this.object;
+    }
 }
 
 // Interpretation of the standard

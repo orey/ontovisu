@@ -168,6 +168,7 @@ class Neighborhood {
             var result_from = server.query(this.graph, this.queryFrom());
             this.parseQueryFrom(result_from);
         }
+        return this.neighbors;
     }
 
     /**
@@ -205,12 +206,19 @@ function test1(){
     console.log(myQuad.to_str());
 }
 
+
+function get_node_id(node) {
+
+
+}
+
+
+
 /*=======================================
  * Exports
  *=======================================*/
 module.exports = {
     define_prefix : define_prefix,
     Neighborhood : Neighborhood,
-    test1 : test1,
-    generateId : generateId
+    test1 : test1
 }

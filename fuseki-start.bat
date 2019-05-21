@@ -1,4 +1,4 @@
-set FUSEKIPATH=C:\Tools\DEV\Software\jena-fuseki1-1.6.0
+set FUSEKIPATH=C:\Tools\DEV\Software\apache-jena-fuseki-3.11.0
 
 echo off
 cls

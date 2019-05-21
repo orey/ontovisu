@@ -94,6 +94,24 @@ function test04(fuz){
     return "<h1>Test 4</h1><pre>" + htmlEscape(t1.to_str()) + "</pre>";
 }
 
+//--------------------------------------------------- 
+// Test on neighborhood 4
+//--------------------------------------------------- 
+function test05(fuz){
+    var t1 = new nb.Neighborhood(
+	"books",
+	new rdfjs.NamedNode("http://example.org/book/book1"));
+    var quads = t1.getNeighborhood(fuz);
+    var output = "<h1>Test 5 - Voisinage avec ID</h1><pre>" + htmlEscape(t1.to_str()) + "</pre>";
+    var node ={ id : 'ID_0',
+                value : 'No value'};
+    for (int i = 0; i < quads.length; ++) {
+        // Find the ID
+        
+        
+    }
+        
+}
 
 
 
