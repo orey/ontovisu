@@ -27,6 +27,11 @@ or subclassing.
 
 const DEFAULT_GRAPH = "DEFAULT";
 
+const NAMED_NODE = "NamedNode";
+const BLANK_NODE = "BlankNode";
+const LITERAL    = "Literal";
+const VARIABLE   = "Variable";
+
 /**
  * Root class of the hierarchy
  */
@@ -59,7 +64,7 @@ class Term {
 // because I need it.
 class NamedNode extends Term{
     constructor(value){
-	    super("NamedNode", value);
+	super(NAMED_NODE, value);
     }
     to_str(){
 	    return "<" + this.value + ">";
@@ -70,7 +75,7 @@ class NamedNode extends Term{
 // because I need it.
 class BlankNode extends Term{
     constructor(value){
-	    super("BlankNode", value);
+	    super(BLANK_NODE, value);
     }
     to_str(){
 	    return "<" + this.value + ">";
@@ -80,7 +85,7 @@ class BlankNode extends Term{
 // Interpretation of the standard
 class Literal extends Term{
     constructor(value, languageOrDatatype = "en"){
-	    super("Literal", value);
+	    super(LITERAL, value);
 	    let ltype = languageOrDatatype.constructor.name;
 	    if (ltype == "String") {
 	        this.language = languageOrDatatype;
@@ -111,7 +116,7 @@ class Literal extends Term{
 
 class Variable extends Term{
     constructor(value){
-	    super("Variable", value);
+	    super(VARIABLE, value);
     }
     to_str(){
 	    return "[" + this.value + "]";
