@@ -10,10 +10,10 @@
 const express = require('express');
 const http    = require('http');
 
-var rdfjs   = require('./rdfjs.js');
+var rdfjs   = require('./rdfjs');
 var fuzeki  = require('./database/fuseki-wrapper');
-var nb      = require('./neighborhood.js');
-var queries = require('./queries.js');
+var nb      = require('./neighborhood');
+var queries = require('./queries');
 
 //--------------------------------------------------- 
 // Defining Fuseki server parameters
@@ -98,21 +98,16 @@ function test04(fuz){
 // Test on neighborhood 4
 //--------------------------------------------------- 
 function test05(fuz){
-    var t1 = new nb.Neighborhood(
-	"books",
-	new rdfjs.NamedNode("http://example.org/book/book1"));
-    var quads = t1.getNeighborhood(fuz);
-    var output = "<h1>Test 5 - Voisinage avec ID</h1><pre>" + htmlEscape(t1.to_str()) + "</pre>";
-    var node ={ id : 'ID_0',
-                value : 'No value'};
-    for (int i = 0; i < quads.length; ++) {
-        // Find the ID
-        
-        
-    }
-        
+    let g = new rdfjs.DefaultGraph("books");
+    let nodesample = new rdfjs.NamedNode("http://example.org/book/book1");
+    // 1. Get node ID
+    let nodeid = queries.get_node_id(fuz, g, nodesample);
+    // 2. Get node ID neighbourhood
+    //TODO change Neighbourhood interface to take DefaultGraph instead of string
+    let n = new nb.Neighborhood(g.to_str(),nodeid);
+    let quads = n.getNeighborhood(fuz);
+    return "<h1>Test 5</h1><pre>" + htmlEscape(n.to_str()) + "</pre>";
 }
-
 
 
 //--------------------------------------------------- 
@@ -141,6 +136,9 @@ function RequestHandler(req, res) {
 
 	// Test 4
 	response += test04(fuz);
+
+	// Test 5
+	response += test05(fuz);
 
     	res.write(response);
 	res.end("<p>End</p></body></html>");

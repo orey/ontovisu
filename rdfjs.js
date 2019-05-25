@@ -31,32 +31,43 @@ const NAMED_NODE = "NamedNode";
 const BLANK_NODE = "BlankNode";
 const LITERAL    = "Literal";
 const VARIABLE   = "Variable";
+const GRAPH      = "DefaultGraph";
 
 /**
  * Root class of the hierarchy
  */
 class Term {
     constructor(termType, value) {
-	if (termType.constructor.name != "String")
-	    throw new TypeError("termType should be a String. Provided type: " +
-				termType.constructor.name);
-	this.termType = termType;
-	console.log(value);
-	console.log(value.constructor.name);
-	if (value.constructor.name != "String")
-	    throw new TypeError("value should be a String. Provided type: " +
-				value.constructor.name);
-	this.value = value;
-//	this.id = uuidv4(); 
+        if (termType.constructor.name != "String")
+            throw new TypeError("termType should be a String. Provided type: " +
+                                termType.constructor.name);
+        this.termType = termType;
+        if (value.constructor.name != "String")
+            throw new TypeError("value should be a String. Provided type: " +
+                                value.constructor.name);
+        this.value = value;
+//	this.id = uuidv4();
     }
     equals(t){
-	if ((t.termType == this.termType) && (t.value == this.value))
-	    return true;
-	else
-	    return false;
+        if ((t.termType == this.termType) && (t.value == this.value))
+            return true;
+        else
+            return false;
     }
     to_str(){
-	return "== Term == Termtype: " + this.termType + " | Value: " + this.value;
+        return "== Term == Termtype: " + this.termType + " | Value: " + this.value;
+    }
+    get_rdf_object(){
+        if (this.termType == NAMED_NODE)
+            return new NamedNode(this.value);
+        else if (this.termType == BLANK_NODE)
+            return new BlankNode(this.value);
+        else if (this.termType == LITERAL)
+            return new Literal(this.value);
+        else if (this.termType == VARIABLE)
+            return new Variable(this.value);
+        else
+            throw new TypeError("Unknown term type: " + termType);
     }
 }
 
@@ -64,10 +75,10 @@ class Term {
 // because I need it.
 class NamedNode extends Term{
     constructor(value){
-	super(NAMED_NODE, value);
+        super(NAMED_NODE, value);
     }
     to_str(){
-	    return "<" + this.value + ">";
+        return "<" + this.value + ">";
     }
 }
 
@@ -75,61 +86,62 @@ class NamedNode extends Term{
 // because I need it.
 class BlankNode extends Term{
     constructor(value){
-	    super(BLANK_NODE, value);
+        super(BLANK_NODE, value);
     }
     to_str(){
-	    return "<" + this.value + ">";
+        return "<" + this.value + ">";
     }
 }
 
 // Interpretation of the standard
 class Literal extends Term{
     constructor(value, languageOrDatatype = "en"){
-	    super(LITERAL, value);
-	    let ltype = languageOrDatatype.constructor.name;
-	    if (ltype == "String") {
-	        this.language = languageOrDatatype;
-	        this.datatype = null;
-	    }
-	    else if (ltype == "NamedNode"){
-	        this.language = "";
-	        this.datatype = languageOrDatatype;
-	    }
-	    else {
-	        throw new TypeError(
-		        "languageOrDataType should be a String or a NamedNode. Provided: "
-		        + ltype);
-	    }
+        super(LITERAL, value);
+        let ltype = languageOrDatatype.constructor.name;
+        if (ltype == "String") {
+            this.language = languageOrDatatype;
+            this.datatype = null;
+        }
+        else if (ltype == "NamedNode"){
+            this.language = "";
+            this.datatype = languageOrDatatype;
+        }
+        else {
+            throw new TypeError(
+                "languageOrDataType should be a String or a NamedNode. Provided: "
+                    + ltype);
+        }
     }
     equals(t){
-	    // Interpretation of the standard
-	    if ((t.termType == this.termType) && (t.value == this.value) &&
-	        (t.language == this.language) && this.datatype.equals(t.datatype))
-	        return true;
-	    else
-	        return false;
+        // Interpretation of the standard
+        if ((t.termType == this.termType) && (t.value == this.value) &&
+            (t.language == this.language) && this.datatype.equals(t.datatype))
+            return true;
+        else
+            return false;
     }
     to_str(){
-	    return '"' + this.value + '"';
+        return '"' + this.value + '"';
     }
 }
 
 class Variable extends Term{
     constructor(value){
-	    super(VARIABLE, value);
+        super(VARIABLE, value);
     }
     to_str(){
-	    return "[" + this.value + "]";
+        return "[" + this.value + "]";
     }
 }
 
 class DefaultGraph extends Term{
-    constructor(value = "DEFAULT_GRAPH"){
-	    super("DefaultGraph", value);
+    constructor(value = "default"){
+        super(GRAPH, value);
     }
     to_str(){
-	    return "(" + this.value + ")";
-    }    
+        //return "(" + this.value + ")";
+        return this.value;
+    }
 }
 
 class Quad {
@@ -146,10 +158,10 @@ class Quad {
     }
     equals(q){
         if (this.subject.equals(q.subject) && this.predicate.equals(q.predicate) &&
-	            this.object.equals(q.object) && this.graph.equals(q.graph))
-	        return true;
-	    else
-	        return false;
+            this.object.equals(q.object) && this.graph.equals(q.graph))
+            return true;
+        else
+            return false;
     }
     to_str(){
         return this.graph.to_str() + " | " +
@@ -176,22 +188,22 @@ class Quad {
 // types of objects.
 class DataFactory{
     namedNode(value){
-	    return new NamedNode(value);
+        return new NamedNode(value);
     }
     blankNode(value = ""){
-	    return new BlankNode(value);
+        return new BlankNode(value);
     }
     literal(value, languageOrDatatype){
-	    return new Literal(value, languageOrDataType);
+        return new Literal(value, languageOrDataType);
     }
     //Optional method
     variable(value){
-	    return new Variable(value);
+        return new Variable(value);
     }
     // The standard method has no parameter, which is weird. Taking
     // liberty with the standard.
     defaultGraph(value = ""){
-	    return new DefaultGraph(value);
+        return new DefaultGraph(value);
     }
     quad(subject, predicate, object, graph=null){
         if (graph == null)
@@ -209,7 +221,7 @@ $ node -e "var a = require('./rdfjs.js');a.test1()"
 ------------------------------------------------------*/
 function test1(){
     q = new Quad(new NamedNode("dc:toto"), new NamedNode("a"),
-	            new Literal("Rouboudou", "en"), new DefaultGraph("books"));
+                 new Literal("Rouboudou", "en"), new DefaultGraph("books"));
     console.log(q.to_str());
 }
 
@@ -225,7 +237,10 @@ module.exports = {
     DefaultGraph : DefaultGraph,
     Quad : Quad,
     DataFactory : DataFactory,
-    test1 : test1
+    test1 : test1,
+    NAMED_NODE : NAMED_NODE,
+    BLANK_NODE :BLANK_NODE,
+    LITERAL : LITERAL,
+    VARIABLE : VARIABLE
 }
-
 

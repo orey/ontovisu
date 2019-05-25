@@ -33,7 +33,7 @@ class FusekiWrapper extends sp.SparqlServer {
         // Defining the URL to query
         this.dataset = dataset;
         this.url = this.buildSelectQuery(query);
-        console.log(this.url);
+        console.log("HHTP Query:\n" + this.url);
         
         // Creating the http object for the request response
         var http = new XMLHttpRequest();
@@ -45,16 +45,15 @@ class FusekiWrapper extends sp.SparqlServer {
         // Creating a listener
         http.onreadystatechange = function() {
             if(http.readyState == 4 && http.status == 200) {
-                console.log("HTTP Response: " + http.responseText);
+                console.log("HTTP Response:\n" + http.responseText);
             }
         }
         http.send(null);
         var response;
         // Parse the response
         try {
-            console.log("HTTP Response: " + http.responseText);    
             response = JSON.parse(http.responseText);
-            console.log(response);
+            //console.log(response);
         }
         catch(e){
             console.log("Error caught during parsing");
